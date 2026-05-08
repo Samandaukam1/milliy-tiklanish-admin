@@ -100,7 +100,19 @@ export default function EditorialRecommendationsPage() {
       setError(err.message);
       setRecommendations(DEMO_RECOMMENDATIONS);
     } else {
-      setRecommendations((data ?? []) as EditorialRecommendation[]);
+      const normalized = (data ?? []).map((item) => {
+        const rawArticle = Array.isArray(item.article) ? item.article[0] ?? null : item.article;
+        const article = rawArticle
+          ? {
+              ...rawArticle,
+              category: Array.isArray(rawArticle.category)
+                ? rawArticle.category[0] ?? null
+                : rawArticle.category,
+            }
+          : null;
+        return { ...item, article };
+      });
+      setRecommendations(normalized as unknown as EditorialRecommendation[]);
     }
     setLoading(false);
   }, []);
@@ -131,7 +143,11 @@ export default function EditorialRecommendationsPage() {
       .order('created_at', { ascending: false })
       .limit(200);
 
-    setAllArticles((data ?? []) as Article[]);
+    const normalizedArticles = (data ?? []).map((a) => ({
+      ...a,
+      category: Array.isArray(a.category) ? a.category[0] ?? null : a.category,
+    }));
+    setAllArticles(normalizedArticles as unknown as Article[]);
     setArticlesLoading(false);
   };
 
