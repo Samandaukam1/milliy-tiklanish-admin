@@ -569,3 +569,47 @@ ALTER TABLE articles ADD COLUMN IF NOT EXISTS source        VARCHAR(50);
 ALTER TABLE articles ADD COLUMN IF NOT EXISTS submission_id UUID REFERENCES reader_article_submissions(id) ON DELETE SET NULL;
 
 CREATE INDEX IF NOT EXISTS idx_articles_submission_id ON articles(submission_id);
+
+-- ── Social settings (single-row table for "Biz bilan bo'ling" section)
+CREATE TABLE IF NOT EXISTS social_settings (
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+
+  -- Section heading (multilingual)
+  title_uz        VARCHAR(255) NOT NULL DEFAULT 'Biz bilan bo''ling',
+  title_ru        VARCHAR(255) NOT NULL DEFAULT 'Будьте с нами',
+  title_en        VARCHAR(255) NOT NULL DEFAULT 'Stay with us',
+
+  -- Social network URLs
+  telegram_url    VARCHAR(500) NOT NULL DEFAULT '',
+  instagram_url   VARCHAR(500) NOT NULL DEFAULT '',
+  youtube_url     VARCHAR(500) NOT NULL DEFAULT '',
+  facebook_url    VARCHAR(500) NOT NULL DEFAULT '',
+  twitter_url     VARCHAR(500) NOT NULL DEFAULT '',
+  tiktok_url      VARCHAR(500) NOT NULL DEFAULT '',
+
+  -- Visibility toggles
+  telegram_enabled   BOOLEAN NOT NULL DEFAULT true,
+  instagram_enabled  BOOLEAN NOT NULL DEFAULT true,
+  youtube_enabled    BOOLEAN NOT NULL DEFAULT true,
+  facebook_enabled   BOOLEAN NOT NULL DEFAULT false,
+  twitter_enabled    BOOLEAN NOT NULL DEFAULT false,
+  tiktok_enabled     BOOLEAN NOT NULL DEFAULT false,
+
+  updated_at      TIMESTAMPTZ DEFAULT now()
+);
+
+-- Seed a default row so there is always exactly one
+INSERT INTO social_settings (id)
+SELECT gen_random_uuid()
+WHERE NOT EXISTS (SELECT 1 FROM social_settings);
+
+-- Row-level security: allow read publicly, restrict writes to authenticated users
+ALTER TABLE social_settings ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY IF NOT EXISTS "social_settings_read_public"
+  ON social_settings FOR SELECT
+  USING (true);
+
+CREATE POLICY IF NOT EXISTS "social_settings_write_authenticated"
+  ON social_settings FOR ALL
+  USING (auth.role() = 'authenticated');

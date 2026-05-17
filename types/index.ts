@@ -199,6 +199,34 @@ export interface TeamMember {
   photo_url?: string;
 }
 
+// Social settings — single row in public.social_settings
+export interface SocialSettings {
+  id: string;
+
+  // Section title (multilingual)
+  title_uz: string;
+  title_ru: string;
+  title_en: string;
+
+  // URLs
+  telegram_url: string;
+  instagram_url: string;
+  youtube_url: string;
+  facebook_url: string;
+  twitter_url: string;
+  tiktok_url: string;
+
+  // Visibility toggles
+  telegram_enabled: boolean;
+  instagram_enabled: boolean;
+  youtube_enabled: boolean;
+  facebook_enabled: boolean;
+  twitter_enabled: boolean;
+  tiktok_enabled: boolean;
+
+  updated_at: string;
+}
+
 // Part 7: Editorial page
 export interface EditorialPage {
   id: string;

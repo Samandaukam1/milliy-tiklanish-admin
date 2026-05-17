@@ -17,6 +17,7 @@ import {
   Info,
   Star,
   Inbox,
+  Share2,
 } from 'lucide-react';
 import clsx from 'clsx';
 import { useAuth } from '@/lib/auth-context';
@@ -93,6 +94,12 @@ const navItems = [
     href: '/reader-submissions',
     icon: Inbox,
     label: 'Reader Submissions',
+  },
+  {
+    title: 'Ijtimoiy tarmoqlar',
+    href: '/social-settings',
+    icon: Share2,
+    label: 'Social Settings',
   },
   {
     title: 'Sozlamalar',
